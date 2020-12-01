@@ -21,3 +21,21 @@ self.addEventListener("install", function (evt) {
 // Activate service worker automatically when the installation is complete
   self.skipWaiting();
 });
+
+// Deleting old files in the cache on activation
+self.addEventListener("activate", function(evt) {
+  evt.waitUntil(
+    caches.keys().then(keyList => {
+      return Promise.all(
+        keyList.map(key => {
+          if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
+            console.log("Removing old cache data", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+
+  self.clients.claim();
+});

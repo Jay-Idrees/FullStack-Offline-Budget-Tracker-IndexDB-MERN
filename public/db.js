@@ -25,3 +25,11 @@ request.onupgradeneeded = function (event) {
   
   /////////////////////////////////////////////////
 
+  // Adding transaction record
+  function saveRecord(record) {
+    const transaction = db.transaction(["pending"], "readwrite");
+    const pendingStore = transaction.objectStore("pending");
+    pendingStore.add(record);
+  };
+
+  

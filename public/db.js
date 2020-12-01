@@ -33,3 +33,33 @@ request.onupgradeneeded = function (event) {
   };
 
   
+function checkDatabase() {
+    // obtaining transactions from the object store
+    const transaction = db.transaction(["pending"], "readwrite");
+    const pendingStore = transaction.objectStore("pending");
+    const getAll = pendingStore.getAll();
+  // After retrieving transaction records, submit a post-request after converting from object to string format
+    getAll.onsuccess = function () {
+      if (getAll.result.length > 0) {
+        fetch('/api/transaction/bulk', {
+          method: 'POST',
+          body: JSON.stringify(getAll.result),
+          headers: {
+            Accept: 'application/json, texdb.jst/plain, */*',
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((response) => response.json())
+          .then(() => {
+         // Clear items in storage 
+            const transaction = db.transaction(["pending"], "readwrite");
+            const pendingStore = transaction.objectStore("pending");
+            pendingStore.clear();
+          });
+      }
+    };
+  }
+  
+  // listen for app coming back online
+  window.addEventListener('online', checkDatabase);
+  

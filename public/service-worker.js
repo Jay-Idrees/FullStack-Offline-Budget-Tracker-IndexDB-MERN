@@ -14,8 +14,8 @@ const FILES_TO_CACHE = [
 ];
 
 // Adding event listener for self installation and cacheing files
-self.addEventListener("install", function (evt) {
-  evt.waitUntil(
+self.addEventListener("install", function (event) {
+  event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(FILES_TO_CACHE))
   );
 // Activate service worker automatically when the installation is complete
@@ -23,8 +23,8 @@ self.addEventListener("install", function (evt) {
 });
 
 // Deleting old files in the cache on activation
-self.addEventListener("activate", function(evt) {
-  evt.waitUntil(
+self.addEventListener("activate", function(event) {
+  event.waitUntil(
     caches.keys().then(keyList => {
       return Promise.all(
         keyList.map(key => {
@@ -38,4 +38,37 @@ self.addEventListener("activate", function(evt) {
   );
 
   self.clients.claim();
+});
+
+// Handeling requests
+self.addEventListener('fetch', function(event) {
+  if (event.request.url.includes('api')) {
+    console.log('[Service Worker] Fetch {data}', event.request.url);
+
+      event.respondWith(
+        caches.open(DATA_CACHE_NAME).then(cache => {
+          return fetch(event.request)
+            .then(response => {
+              if (response.status === 200) {
+                cache.put(event.request.url, response.clone());
+              }
+
+              return response;
+            })
+            .catch(err => {
+              return cache.match(event.request);
+            });
+        })
+      );
+  
+    return;
+  } // br close for the event listener for the fetch function
+
+  event.respondWith(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(response => {
+        return response || fetch(event.request);
+      });
+    })
+  );
 });

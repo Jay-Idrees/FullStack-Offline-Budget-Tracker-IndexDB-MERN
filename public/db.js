@@ -60,6 +60,6 @@ function checkDatabase() {
     };
   }
   
-  // listen for app coming back online
+  // listen if the user is revisiting
   window.addEventListener('online', checkDatabase);
   

@@ -3,7 +3,7 @@
 ## About the Project
 This project is a full-stack application that helps the user to keep track of their budget. The user can input expense items and can also enter values for any deposits. This app is intended to be particularly useful for people who are travelling and do not have any reliable connection to internet. The app stores locally using No-SQL Index DB. I developed this application during the 9th week of the coding bootcamp experience at Columbia University, NY. Date of publication: 11/24/2020
 
-[Deployed Heroku link to the Offline Budget App]() <br />
+[Deployed Heroku link to the Offline Budget App](https://full-stack-budget-tracker.herokuapp.com/) <br />
 [Watch a video demonstrating the app functionality]()<br />
 
 ## Contact Programmer for questions
